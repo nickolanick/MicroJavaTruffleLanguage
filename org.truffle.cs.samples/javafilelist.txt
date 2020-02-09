@@ -1,0 +1,10 @@
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/Abs.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/Add.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/Arg.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/AssumptionArg.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/Expression.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/ExpressionFunction.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/LiveCoding.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/PlainAST/PlainAST.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/RunningExamples.java
+/home/nickolanick/Documents/Learning/graalvm/lviv_01_2020_GraalVMCourse/newSource/trufflecourse/code/org.truffle.cs.samples/src/org/truffle/cs/samples/SimplestPEA.java
