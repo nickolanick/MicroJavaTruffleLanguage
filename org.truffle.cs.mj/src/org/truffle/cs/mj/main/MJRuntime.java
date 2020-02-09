@@ -21,9 +21,10 @@ public class MJRuntime {
 
     static String mjProgramRD = ""//
                     + "program Sample { "//
-                    + "void main(int t) int i; int j; { \n"//
-                    + "                 print(t);"//
-                    + "                 print(12); \n" //
+                    + "void testik(int t) { print(t); }" //
+                    + "void main(int p) int i; int j; { \n"//
+                    + "testik(0000);"//
+                    + "                 print(p); \n" //
                     + "                 i = 3;\n"//
                     + "                 print(i);\n"//
                     + "                 print(i+12);\n"//
@@ -111,7 +112,7 @@ public class MJRuntime {
         System.out.println("Calling main function...");
         CallTarget callTarget = runtime.createCallTarget(parser.getMain());
         for (int i = 0; i < 1000; i++) {
-            callTarget.call(5455);
+            callTarget.call(1121312);
         }
     }
 

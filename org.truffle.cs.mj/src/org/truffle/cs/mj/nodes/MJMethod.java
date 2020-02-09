@@ -35,10 +35,10 @@ public class MJMethod extends RootNode {
 
     @ExplodeLoop
     public void setArgs(VirtualFrame frame) {
-        List<? extends FrameSlot> slots = this.getFrameDescriptor().getSlots();
         Object[] args = frame.getArguments();
+        System.out.println(args.length);
         for (int i = 0; i < args.length; i++) {
-            frame.setObject(slots.get(i), args[i]);
+            frame.setObject(this.getFrameDescriptor().getSlots().get(i), args[i]);
         }
 
     }

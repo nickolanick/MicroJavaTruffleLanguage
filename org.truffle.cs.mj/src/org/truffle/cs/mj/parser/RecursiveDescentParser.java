@@ -45,6 +45,7 @@ import java.util.Map;
 
 import org.truffle.cs.mj.nodes.MJBinaryFactory;
 import org.truffle.cs.mj.nodes.MJBlock;
+import org.truffle.cs.mj.nodes.MJCallable;
 import org.truffle.cs.mj.nodes.MJConstantIntNodeGen;
 import org.truffle.cs.mj.nodes.MJExpr;
 import org.truffle.cs.mj.nodes.MJExprReadVar;
@@ -470,6 +471,7 @@ public final class RecursiveDescentParser {
             case ident:
                 String des = Designator();
                 switch (sym) {
+
                     case assign:
                         Assignop();
                         FrameSlot slot = currentFrameDescriptor.findFrameSlot(des);
@@ -484,7 +486,9 @@ public final class RecursiveDescentParser {
                         throw new Error("Unimplemented");
                     // break;
                     case lpar:
-                        ActPars();
+                        statement = parseMethodCall(des);
+
+// ActPars();
                         break;
                     case pplus:
                         scan();
@@ -496,6 +500,7 @@ public final class RecursiveDescentParser {
                         throw new Error("Designator Follow");
                 }
                 check(semicolon);
+
                 break;
             // ----- "if" "(" Condition ")" Statement [ "else" Statement ]
             case if_:
@@ -570,6 +575,37 @@ public final class RecursiveDescentParser {
                 throw new Error("Invalid start...");
         }
         return statement;
+    }
+
+    private MJStatement parseMethodCall(String methodName) {
+        MJMethod currentMethod = null;
+        List<MJExpr> parameters = new ArrayList<>();
+
+        for (MJMethod method : functions) {
+            if (method.getName().equals(methodName)) {
+                currentMethod = method;
+                break;
+            }
+        }
+
+        check(lpar);
+
+        if (firstExpr.contains(sym)) {
+            for (;;) {
+                parameters.add(Expr());
+                if (sym == comma) {
+                    scan();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        check(rpar);
+// check(semicolon);
+
+        return new MJCallable(currentMethod, parameters);
+
     }
 
     /** ActPars = "(" [ Expr { "," Expr } ] ")" . */
