@@ -42,7 +42,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.truffle.cs.mj.nodes.MJBinary;
 import org.truffle.cs.mj.nodes.MJBinaryFactory;
 import org.truffle.cs.mj.nodes.MJBlock;
 import org.truffle.cs.mj.nodes.MJCallable;
@@ -54,6 +56,7 @@ import org.truffle.cs.mj.nodes.MJMethod;
 import org.truffle.cs.mj.nodes.MJPrint;
 import org.truffle.cs.mj.nodes.MJStatement;
 import org.truffle.cs.mj.nodes.MJWriteVar;
+import org.truffle.cs.mj.nodes.MJif;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -506,13 +509,22 @@ public final class RecursiveDescentParser {
             case if_:
                 scan();
                 check(lpar);
-                Condition();
+                MJExpr cond = Condition();
                 check(rpar);
-                Statement();
+                check(lbrace);
+                MJStatement statementOne = Statement();
+                check(rbrace);
+                MJStatement statementTwo = null;
+
                 if (sym == else_) {
                     scan();
-                    Statement();
+                    check(lbrace);
+                    statementTwo = Statement();
+                    check(rbrace);
+
                 }
+                statement = new MJif(cond, statementOne, statementTwo);
+
                 break;
             // ----- "while" "(" Condition ")" Statement
             case while_:
@@ -553,7 +565,6 @@ public final class RecursiveDescentParser {
                 break;
             // ----- "print" "(" Expr [ comma number ] ")" ";"
             case print:
-                System.out.println("test print");
                 scan();
                 check(lpar);
 
@@ -625,50 +636,57 @@ public final class RecursiveDescentParser {
     }
 
     /** Condition = CondTerm { "||" CondTerm } . */
-    private void Condition() {
-        CondTerm();
+    private MJExpr Condition() {
+        MJExpr expr = CondTerm();
+
         while (sym == or) {
             scan();
-            CondTerm();
+
+            expr = MJBinaryFactory.OrOpNodeGen.create(expr, CondTerm());
         }
+        return expr;
     }
 
     /** CondTerm = CondFact { "&&" CondFact } . */
-    private void CondTerm() {
-        CondFact();
+    private MJExpr CondTerm() {
+        MJExpr expr = CondFact();
+
         while (sym == and) {
             scan();
-            CondFact();
+            expr = MJBinaryFactory.OrOpNodeGen.create(expr, CondFact());
         }
+
+        return expr;
 
     }
 
     /** CondFact = Expr Relop Expr . */
-    private void CondFact() {
-        Expr();
+    private MJExpr CondFact() {
+        MJExpr expr = Expr();
         CompOp comp = Relop();
         switch (comp) {
             case ne:
-                Expr();
+                expr = MJBinaryFactory.NeOpNodeGen.create(expr, Expr());
                 break;
             case lt:
-                Expr();
+                expr = MJBinaryFactory.LOpNodeGen.create(expr, Expr());
                 break;
             case le:
-                Expr();
+                expr = MJBinaryFactory.LeOpNodeGen.create(expr, Expr());
                 break;
             case eq:
-                Expr();
+                expr = MJBinaryFactory.EqOpNodeGen.create(expr, Expr());
                 break;
             case ge:
-                Expr();
+                expr = MJBinaryFactory.GeOpNodeGen.create(expr, Expr());
                 break;
             case gt:
-                Expr();
+                expr = MJBinaryFactory.GOpNodeGen.create(expr, Expr());
                 break;
             default:
                 break;
         }
+        return expr;
     }
 
     /** Expr = [ "-" ] Term { Addop Term } . */

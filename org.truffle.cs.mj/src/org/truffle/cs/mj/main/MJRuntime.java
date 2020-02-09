@@ -21,9 +21,10 @@ public class MJRuntime {
 
     static String mjProgramRD = ""//
                     + "program Sample { "//
-                    + "void testik(int t) { print(t); }" //
+                    + "void testik(int t) { "//
+                    + "if(t>3){ print(t);} else{print(1234);}" + "}" //
                     + "void main(int p) int i; int j; { \n"//
-                    + "testik(0000);"//
+                    + "testik(0);"//
                     + "                 print(p); \n" //
                     + "                 i = 3;\n"//
                     + "                 print(i);\n"//

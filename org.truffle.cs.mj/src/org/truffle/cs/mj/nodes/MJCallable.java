@@ -5,11 +5,9 @@ import java.util.stream.Collectors;
 
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.DirectCallNode;
 
 public class MJCallable extends MJStatement {
     @Child MJMethod method;
-    DirectCallNode callNode;
     List<MJExpr> arguments;
 
     public MJCallable(MJMethod method, List<MJExpr> arguments) {
