@@ -48,12 +48,11 @@ import org.truffle.cs.mj.nodes.MJBlock;
 import org.truffle.cs.mj.nodes.MJConstantIntNodeGen;
 import org.truffle.cs.mj.nodes.MJExpr;
 import org.truffle.cs.mj.nodes.MJExprReadVar;
-import org.truffle.cs.mj.nodes.MJExprReadVarNodeGen;
-import org.truffle.cs.mj.nodes.MJExprWriteVar;
-import org.truffle.cs.mj.nodes.MJExprWriteVarNodeGen;
+
 import org.truffle.cs.mj.nodes.MJMethod;
 import org.truffle.cs.mj.nodes.MJPrint;
 import org.truffle.cs.mj.nodes.MJStatement;
+import org.truffle.cs.mj.nodes.MJWriteVar;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -389,7 +388,7 @@ public final class RecursiveDescentParser {
         check(lpar);
         if (sym == ident) {
             // passed parameters
-            parameterNames = FormPars();
+            FormPars();
         }
         check(rpar);
 
@@ -399,24 +398,23 @@ public final class RecursiveDescentParser {
         }
         MJBlock block = Block();
         currentFun = new MJMethod(name, block, currentFrameDescriptor);
+
         functions.add(currentFun);
-        parameterNames = null;
+
         return currentFun;
     }
 
     /** FormPars = Type ident { "," Type ident } . */
-    private ArrayList<String> FormPars() {
-        ArrayList<String> parNames = new ArrayList<String>();
+    private void FormPars() {
         Type();
         check(ident);
-        parNames.add(t.str);
+        currentFrameDescriptor.addFrameSlot(t.str);
         while (sym == comma) {
             scan();
             Type();
             check(ident);
-            parNames.add(t.str);
+            currentFrameDescriptor.addFrameSlot(t.str);
         }
-        return parNames;
     }
 
     /** Type = ident . */
@@ -475,8 +473,7 @@ public final class RecursiveDescentParser {
                     case assign:
                         Assignop();
                         FrameSlot slot = currentFrameDescriptor.findFrameSlot(des);
-                        statement = MJExprWriteVarNodeGen.create(Expr(), slot);
-// statement = MJE (slot, Expr());
+                        statement = new MJWriteVar(slot, Expr());
 
                         break;
                     case plusas:
@@ -716,7 +713,7 @@ public final class RecursiveDescentParser {
                     ActPars();
                 } else {
                     // normal variable node
-                    factor = MJExprReadVarNodeGen.create(currentFrameDescriptor.findFrameSlot(varname));
+                    factor = new MJExprReadVar(currentFrameDescriptor.findFrameSlot(varname));
                 }
                 break;
             case number:

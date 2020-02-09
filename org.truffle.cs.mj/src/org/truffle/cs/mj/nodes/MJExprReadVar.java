@@ -1,22 +1,23 @@
 package org.truffle.cs.mj.nodes;
 
 import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.dsl.NodeField;
-import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-@NodeField(name = "slot", type = FrameSlot.class)
-public abstract class MJExprReadVar extends MJExpr {
-    protected abstract FrameSlot getSlot();
+public class MJExprReadVar extends MJExpr {
+    FrameSlot slot;
 
-    @Specialization
-    public Object readVariable(VirtualFrame frame) {
+    public MJExprReadVar(FrameSlot slot) {
+        super();
+        this.slot = slot;
+    }
+
+    @Override
+    public Object execute(VirtualFrame frame) {
         try {
-// return frame.getObject(slot);
 
-            Object ob = frame.getObject(getSlot());
+            Object ob = frame.getObject(slot);
 
             return ob;
         } catch (FrameSlotTypeException e) {
