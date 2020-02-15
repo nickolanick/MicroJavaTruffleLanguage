@@ -54,6 +54,7 @@ import org.truffle.cs.mj.nodes.MJExprReadVar;
 
 import org.truffle.cs.mj.nodes.MJMethod;
 import org.truffle.cs.mj.nodes.MJPrint;
+import org.truffle.cs.mj.nodes.MJRepeat;
 import org.truffle.cs.mj.nodes.MJStatement;
 import org.truffle.cs.mj.nodes.MJWriteVar;
 import org.truffle.cs.mj.nodes.MJif;
@@ -530,9 +531,10 @@ public final class RecursiveDescentParser {
             case while_:
                 scan();
                 check(lpar);
-                Condition();
+                MJExpr condition = Condition();
                 check(rpar);
-                Statement();
+                MJStatement block = Statement();
+                statement = new MJRepeat(condition, block);
                 break;
             // ----- "break" ";"
             case break_:
@@ -577,7 +579,7 @@ public final class RecursiveDescentParser {
                 check(semicolon);
                 break;
             case lbrace:
-                Block();
+                statement = Block();
                 break;
             case semicolon:
                 scan();
@@ -768,6 +770,7 @@ public final class RecursiveDescentParser {
                 } else {
                     // normal variable node
                     factor = new MJExprReadVar(currentFrameDescriptor.findFrameSlot(varname));
+                    System.out.println(factor + "test");
                 }
                 break;
             case number:

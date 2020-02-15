@@ -16,7 +16,7 @@ import com.oracle.truffle.api.TruffleRuntime;
 public class MJRuntime {
 
     public static void main(String[] args) {
-        parseRD(mjProgramRD);
+        parseRD(whileLoopRD);
     }
 
     static String mjProgramRD = ""//
@@ -38,10 +38,9 @@ public class MJRuntime {
                     + "             void foo(int i,int j) {print(i+j);}" //
                     + "             void main () int i;{ "//
                     + "                 i =0; "//
-                    + "                 while(i<10) {"//
+                    + "                 while(10>i) {"//
                     + "                     print(i); "//
                     + "                     i=i+1;"//
-                    + "                     foo(i,2);" //
                     + "                 }"//
                     + "             }"//
                     + "}";
@@ -113,7 +112,7 @@ public class MJRuntime {
         System.out.println("Calling main function...");
         CallTarget callTarget = runtime.createCallTarget(parser.getMain());
         for (int i = 0; i < 1000; i++) {
-            callTarget.call(1121312);
+            callTarget.call();
         }
     }
 
