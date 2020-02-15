@@ -16,7 +16,7 @@ import com.oracle.truffle.api.TruffleRuntime;
 public class MJRuntime {
 
     public static void main(String[] args) {
-        parseRD(whileLoopRD);
+        parseRD(BreakPropgram);
     }
 
     static String mjProgramRD = ""//
@@ -34,6 +34,19 @@ public class MJRuntime {
                     + "         }\n"//
                     + "}";
 
+    static String BreakPropgram = "program P {"//
+                    + "             void main () int i;{ " //
+                    + "                 i = 0;"//
+                    + "                 while(i<20) {" //
+                    + "                    i = i + 1;" //
+                    + "                    if (i % 2 == 0) {" //
+                    + "                        print(i); " //
+                    + "                        continue;" //
+                    + "                    }" //
+                    + "                    if (i % 15 == 0) {break;}"//
+                    + "                 }"//
+                    + "             }"//
+                    + "}";
     static String whileLoopRD = "program P {"//
                     + "             void foo(int i,int j) {print(i+j);}" //
                     + "             void main () int i;{ "//
@@ -41,6 +54,7 @@ public class MJRuntime {
                     + "                 while(10>i) {"//
                     + "                     print(i); "//
                     + "                     i=i+1;"//
+                    + " break;"//
                     + "                 }"//
                     + "             }"//
                     + "}";

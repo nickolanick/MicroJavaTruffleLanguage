@@ -47,8 +47,10 @@ import java.util.Optional;
 import org.truffle.cs.mj.nodes.MJBinary;
 import org.truffle.cs.mj.nodes.MJBinaryFactory;
 import org.truffle.cs.mj.nodes.MJBlock;
+import org.truffle.cs.mj.nodes.MJBreak;
 import org.truffle.cs.mj.nodes.MJCallable;
 import org.truffle.cs.mj.nodes.MJConstantIntNodeGen;
+import org.truffle.cs.mj.nodes.MJContinue;
 import org.truffle.cs.mj.nodes.MJExpr;
 import org.truffle.cs.mj.nodes.MJExprReadVar;
 
@@ -512,9 +514,7 @@ public final class RecursiveDescentParser {
                 check(lpar);
                 MJExpr cond = Condition();
                 check(rpar);
-                check(lbrace);
                 MJStatement statementOne = Statement();
-                check(rbrace);
                 MJStatement statementTwo = null;
 
                 if (sym == else_) {
@@ -540,12 +540,15 @@ public final class RecursiveDescentParser {
             case break_:
                 scan();
                 check(semicolon);
+                statement = new MJBreak();
+
                 break;
 
             // ----- "break" ";"
             case continue_:
                 scan();
                 check(semicolon);
+                statement = new MJContinue();
                 break;
             // ----- "return" [ Expr ] ";"
             case return_:

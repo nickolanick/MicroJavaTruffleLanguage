@@ -19,7 +19,18 @@ public class MJWhile extends Node implements RepeatingNode {
         if (!(boolean) this.condition.execute(frame)) {
             return false;
         }
-        this.body.execute(frame);
+        try {
+            /* Execute the loop body. */
+            this.body.execute(frame);
+            /* Continue with next loop iteration. */
+        } catch (MJContinueException ex) {
+
+            return true;
+
+        } catch (MJBreakException ex) {
+            /* Break out of the loop. */
+            return false;
+        }
         return true;
     }
 
