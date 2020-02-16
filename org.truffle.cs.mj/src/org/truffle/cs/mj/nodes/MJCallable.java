@@ -1,24 +1,29 @@
 package org.truffle.cs.mj.nodes;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class MJCallable extends MJStatement {
-    @Child MJMethod method;
-    List<MJExpr> arguments;
+    @Children MJExpr arguments[];
+    private RootCallTarget target;
 
     public MJCallable(MJMethod method, List<MJExpr> arguments) {
         super();
-        this.method = method;
-        this.arguments = arguments;
+        this.target = Truffle.getRuntime().createCallTarget(method);
+        this.arguments = arguments.toArray(new MJExpr[arguments.size()]);
     }
 
     @Override
     public Object execute(VirtualFrame frame) {
-        return Truffle.getRuntime().createCallTarget(method).call(arguments.stream().map(n -> n.execute(frame)).collect(Collectors.toList()).toArray());
+        List<Object> result = new ArrayList<>();
+        for (MJExpr arg : arguments) {
+            result.add(arg.execute(frame));
+        }
+        return target.call(result.toArray());
     }
 
 }

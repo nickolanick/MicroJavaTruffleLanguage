@@ -49,6 +49,7 @@ import org.truffle.cs.mj.nodes.MJBinaryFactory;
 import org.truffle.cs.mj.nodes.MJBlock;
 import org.truffle.cs.mj.nodes.MJBreak;
 import org.truffle.cs.mj.nodes.MJCallable;
+import org.truffle.cs.mj.nodes.MJCallableReturnable;
 import org.truffle.cs.mj.nodes.MJConstantIntNodeGen;
 import org.truffle.cs.mj.nodes.MJContinue;
 import org.truffle.cs.mj.nodes.MJExpr;
@@ -57,6 +58,7 @@ import org.truffle.cs.mj.nodes.MJExprReadVar;
 import org.truffle.cs.mj.nodes.MJMethod;
 import org.truffle.cs.mj.nodes.MJPrint;
 import org.truffle.cs.mj.nodes.MJRepeat;
+import org.truffle.cs.mj.nodes.MJReturnNode;
 import org.truffle.cs.mj.nodes.MJStatement;
 import org.truffle.cs.mj.nodes.MJWriteVar;
 import org.truffle.cs.mj.nodes.MJif;
@@ -390,7 +392,9 @@ public final class RecursiveDescentParser {
 
         // method name
         check(ident);
-        String name = t.str;
+
+        currentFun = new MJMethod(t.str, null, currentFrameDescriptor);
+        functions.add(currentFun);
 
         check(lpar);
         if (sym == ident) {
@@ -403,11 +407,7 @@ public final class RecursiveDescentParser {
             // Variables declaration
             VarDecl();
         }
-        MJBlock block = Block();
-        currentFun = new MJMethod(name, block, currentFrameDescriptor);
-
-        functions.add(currentFun);
-
+        currentFun.SetBlock(Block());
         return currentFun;
     }
 
@@ -482,7 +482,6 @@ public final class RecursiveDescentParser {
                         Assignop();
                         FrameSlot slot = currentFrameDescriptor.findFrameSlot(des);
                         statement = new MJWriteVar(slot, Expr());
-
                         break;
                     case plusas:
                     case minusas:
@@ -554,7 +553,7 @@ public final class RecursiveDescentParser {
             case return_:
                 scan();
                 if (sym != semicolon) {
-                    Expr();
+                    statement = new MJReturnNode(Expr());
                 } else {
                     break;
                 }
@@ -593,7 +592,7 @@ public final class RecursiveDescentParser {
         return statement;
     }
 
-    private MJStatement parseMethodCall(String methodName) {
+    private MJCallable parseMethodCall(String methodName) {
         MJMethod currentMethod = null;
         List<MJExpr> parameters = new ArrayList<>();
 
@@ -618,10 +617,8 @@ public final class RecursiveDescentParser {
         }
 
         check(rpar);
-// check(semicolon);
 
         return new MJCallable(currentMethod, parameters);
-
     }
 
     /** ActPars = "(" [ Expr { "," Expr } ] ")" . */
@@ -763,17 +760,16 @@ public final class RecursiveDescentParser {
             case abs:
                 scan();
                 check(lpar);
-                Expr();
+                factor = Expr();
                 check(rpar);
-                return null;
+                break;
             case ident:
                 String varname = Designator();
                 if (sym == lpar) {
-                    ActPars();
+                    factor = new MJCallableReturnable(parseMethodCall(varname));
                 } else {
                     // normal variable node
                     factor = new MJExprReadVar(currentFrameDescriptor.findFrameSlot(varname));
-                    System.out.println(factor + "test");
                 }
                 break;
             case number:
@@ -799,6 +795,7 @@ public final class RecursiveDescentParser {
                 check(rpar);
                 break;
             default:
+
                 throw new Error("Invalid fact");
         }
         return factor;

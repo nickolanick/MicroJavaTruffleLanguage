@@ -24,6 +24,10 @@ public class MJMethod extends RootNode {
 
     }
 
+    public void SetBlock(MJBlock addBlock) {
+        this.block = addBlock;
+    }
+
     @Override
 
     public Object execute(VirtualFrame frame) {
@@ -36,7 +40,6 @@ public class MJMethod extends RootNode {
     @ExplodeLoop
     public void setArgs(VirtualFrame frame) {
         Object[] args = frame.getArguments();
-        System.out.println(args.length);
         for (int i = 0; i < args.length; i++) {
             frame.setObject(this.getFrameDescriptor().getSlots().get(i), args[i]);
         }

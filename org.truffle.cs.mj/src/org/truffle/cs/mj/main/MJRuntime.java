@@ -16,7 +16,7 @@ import com.oracle.truffle.api.TruffleRuntime;
 public class MJRuntime {
 
     public static void main(String[] args) {
-        parseRD(BreakPropgram);
+        parseRD(divAlgorithm);
     }
 
     static String mjProgramRD = ""//
@@ -35,29 +35,33 @@ public class MJRuntime {
                     + "}";
 
     static String BreakPropgram = "program P {"//
+                    + "             void foo() {return 3;}" //
                     + "             void main () int i;{ " //
-                    + "                 i = 0;"//
-                    + "                 while(i<20) {" //
-                    + "                    i = i + 1;" //
-                    + "                    if (i % 2 == 0) {" //
-                    + "                        print(i); " //
-                    + "                        continue;" //
-                    + "                    }" //
-                    + "                    if (i % 15 == 0) {break;}"//
-                    + "                 }"//
+                    + "                 print(432+foo());"  //
                     + "             }"//
                     + "}";
     static String whileLoopRD = "program P {"//
-                    + "             void foo(int i,int j) {print(i+j);}" //
+                    + "             void foo(int i,int j) {return i+j;}" //
                     + "             void main () int i;{ "//
                     + "                 i =0; "//
                     + "                 while(10>i) {"//
                     + "                     print(i); "//
-                    + "                     i=i+1;"//
-                    + " break;"//
+                    + "                     i=foo(i,1);"//
                     + "                 }"//
                     + "             }"//
                     + "}";
+    static String recursiveProgram = "program p {"//
+                    + "               void foo(int i) {"//
+                    + "                        print(i);"//
+                    + "                        if(i == 5){"//
+                    + "                             return 100;"//
+                    + "                        }"//
+                    + "                        return foo(i-5);"//
+                    + "                    }"//
+                    + "               void main(){"//
+                    + "                 print(foo(100));"//
+                    + "                 }" //
+                    + "             }";//
     static String ifProgram = "program P {"//
                     + "             void foo(int i,int j) {"//
                     + "                 if(i>j) {"//
@@ -89,8 +93,8 @@ public class MJRuntime {
                     + "                 while(tmpA != 0) {"//
                     + "                     neg = neg + tmp;"//
                     + "                     tmpA = tmpA + tmp;"//
-                    // + " print(tmpA);"//
-                    // + " print(neg);"//
+                    + " print(tmpA);"//
+                    + " print(neg);"//
                     + "                 }"//
                     + "                 return neg;"//
                     + "             }"//
@@ -126,7 +130,7 @@ public class MJRuntime {
         System.out.println("Calling main function...");
         CallTarget callTarget = runtime.createCallTarget(parser.getMain());
         for (int i = 0; i < 1000; i++) {
-            callTarget.call();
+            callTarget.call(5, 5);
         }
     }
 
